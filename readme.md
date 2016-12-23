@@ -50,7 +50,7 @@ Either:
 - Request
 
 ```
-POST $HOST/conferences/<conference_name>/admin/<viewer>/<viewee>
+POST $HOST/conferences/<conference_name>/<viewer>/<viewee>
 ```
 
 - Response

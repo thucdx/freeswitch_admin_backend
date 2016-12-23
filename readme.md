@@ -25,6 +25,7 @@ GET $HOST/conferences/<conference_name>/
 ```
 
 - Response
+
 Either:
     - 404 Not Found
     - 200 OK, JSON content of conference
@@ -37,6 +38,7 @@ GET $HOST/conferences/free
 ```
 
 - Response
+
 Either
     - 404 Not Found
     - 200 OK, room number
@@ -50,7 +52,8 @@ POST $HOST/conferences/<conference_name>/admin/<viewer>/<viewee>
 ```
 
 - Response
-Either
+
+Either:
     - OK
     - NOK: in case command is invalid
 

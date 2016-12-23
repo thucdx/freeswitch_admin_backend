@@ -1,4 +1,6 @@
 from flask import Flask, jsonify
+from flask_cors import CORS, cross_origin
+
 import jsonpickle
 from expiringdict import ExpiringDict
 
@@ -7,6 +9,8 @@ from conference import Conference
 bookingConference = ExpiringDict(max_len=100, max_age_seconds=10)
 
 app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
+
 app.url_map.strict_slashes = False
 
 OK = {'status': 'OK'}
@@ -31,13 +35,17 @@ def get_conference_list():
     if conf:
         return jsonpickle.encode(conf)
     else:
-        return jsonpickle.encode({'status': 'not found'})
+        return jsonpickle.encode([])
 
 
 @app.route('/conferences/<conf_name>', methods=['GET'])
 def get_conference_info(conf_name):
     print 'conf_name', conf_name
-    return jsonpickle.encode(Conference.get_by_name(conf_name))
+    conf_detail = Conference.get_by_name(conf_name)
+    if conf_detail:
+        return jsonpickle.encode(conf_detail)
+    else:
+        return jsonpickle.encode(NOT_FOUND)
 
 
 @app.route('/conferences/<conf_name>/admin/<admin>', methods=['POST'])

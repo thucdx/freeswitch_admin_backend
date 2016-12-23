@@ -1,0 +1,4 @@
+flask>=0.11
+jsonpickle>=0.9
+python-ESL>=1.4
+expiringdict>=1.1

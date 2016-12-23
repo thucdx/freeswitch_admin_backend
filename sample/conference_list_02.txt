@@ -1,0 +1,6 @@
+Conference 3000-172.31.6.132 (3 members rate: 8000 flags: running|answered|enforce_min|dynamic|exit_sound|enter_sound|json_status)
+11;sofia/internal/1019@35.165.245.123;ce840628-de39-4044-8be1-6c937e51325f;1019;1019;hear|speak|video;0;0;0;100
+10;sofia/internal/1003@35.165.245.123;c61e6263-c302-41b7-abcd-df33bb77882e;1003;1003;hear|speak|video;0;0;0;100
+9;sofia/internal/1002@35.165.245.123;1c790599-40a5-4934-8ca5-0c6d21d9284c;1002;1002;hear|speak|video|floor|vid-floor;0;0;0;100
+Conference 3002-172.31.6.132 (1 member rate: 8000 flags: running|answered|enforce_min|dynamic|exit_sound|enter_sound|json_status)
+7;sofia/internal/1003@35.165.245.123;57f3d616-7c4c-4f79-8c6b-9462f4ca7bb5;1003;1003;hear|speak|talking|video|floor|vid-floor;0;0;0;100

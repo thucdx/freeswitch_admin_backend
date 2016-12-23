@@ -64,9 +64,9 @@ def get_available_conference():
     active_confererences = Conference.get_conference_list()
     for room in range(3000, 3100):
         ok = True
-        for conf in active_confererences:
-            room_str = str(room)
+        room_str = str(room)
 
+        for conf in active_confererences:
             if conf.name.startswith(room_str):
                 ok = False
                 break

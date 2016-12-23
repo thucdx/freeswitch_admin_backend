@@ -7,6 +7,7 @@ from conference import Conference
 bookingConference = ExpiringDict(max_len=100, max_age_seconds=10)
 
 app = Flask(__name__)
+app.url_map.strict_slashes = False
 
 OK = {'status': 'OK'}
 GENERAL_ERROR = {'status': 'ERROR'}

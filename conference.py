@@ -136,5 +136,9 @@ class Conference:
 
     @staticmethod
     def get_conference_list():
-        str = Monitor.command('conference list').getBody()
-        return Conference.from_string(str)
+        conf_list = Monitor.command('conference list')
+        if conf_list:
+            str = conf_list.getBody()
+            return Conference.from_string(str)
+        else:
+            return []

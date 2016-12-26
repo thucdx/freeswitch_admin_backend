@@ -86,4 +86,4 @@ def get_available_conference():
     return jsonpickle.encode({'code': -1, 'data': {}})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', debug=True, threaded=True)

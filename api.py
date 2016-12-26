@@ -81,9 +81,9 @@ def get_available_conference():
                 break
         if ok and room_str not in bookingConference:
             bookingConference[room_str] = 1
-            return jsonpickle.encode({'result': room_str})
+            return jsonpickle.encode({'code': 0, 'data': {'room': room_str}})
 
-    return jsonpickle.encode(NOT_FOUND)
+    return jsonpickle.encode({'code': -1, 'data': {}})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)

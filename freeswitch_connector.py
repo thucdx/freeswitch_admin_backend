@@ -12,8 +12,11 @@ class Monitor:
 
     @staticmethod
     def command(cmd):
+        print 'Send command: ', cmd
         return Monitor.con.api(cmd)
 
+    # @staticmethod
+    # def
 
 
 

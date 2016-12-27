@@ -20,7 +20,5 @@ class User:
         return User(id, register_string, uuid, caller_name, caller_number, \
                     status, volume_setting, energy, volume_out, energy_setting)
 
-
-#
-# user = User.parse("5;sofia/internal/1002@35.165.245.123;76245f95-50fe-48a4-bb2a-4cbeb9bf295b;1002;1002;hear|speak|video|floor|vid-floor;0;0;0;100")
-# print user.id, user.status
+    def is_admin(self):
+        return self.status is not None and self.status.find('moderator') >= 0

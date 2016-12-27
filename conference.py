@@ -9,11 +9,13 @@ class Conference:
     HEADER_PATTERN = "Conference (\S+) \((\d+) member(s*) rate: (\d+) flags: ([\w|]+)\)"
     UNKNOWN_ID = '-1'
 
+    RELATION_CLEAR = 'clear'
+    RELATION_SENDVIDEO = 'sendvideo'
+
     def __init__(self, name='noname', total=0, rate=-1, flags=''):
         self.name = name
         self.total = total
         self.users = []
-        self.admin_ids = []
         self.flags = flags
         self.rate = rate
 
@@ -24,72 +26,93 @@ class Conference:
         return self.users
 
     def find_id_by_number(self, number):
-        for user in self.get_users():
-            if user.caller_number == number:
-                return user.id
+        for u in self.get_users():
+            if u.caller_number == number:
+                return u.id
         return Conference.UNKNOWN_ID
 
     def set_admin(self, number):
-        admin_id = self.find_id_by_number(number)
-        print 'total user', self.total
+        pass
 
-        if admin_id != Conference.UNKNOWN_ID:
-            if admin_id not in self.admin_ids:
-                self.admin_ids.append(admin_id)
+    def get_normal_user_ids(self):
+        return [u.id for u in self.users if not u.is_admin()]
 
-            # clear view of member
-            user_ids = self.get_normal_users()
+    def get_admin_ids(self):
+        return [u.id for u in self.users if u.is_admin()]
 
-            # IMPORTANT ASSUMPTION: assume total normal user is 2
-            for user_id in user_ids:
-                for admin_id in self.admin_ids:
-                    Monitor.command('conference %s relate %s %s clear' % (self.name, admin_id, user_id))
-                    Monitor.command('conference %s relate %s %s clear' % (self.name, user_id, admin_id))
+    # admin should see member, while normal user see each other
+    def init_monitoring(self):
+        admin_ids = self.get_admin_ids()
+        normal_user_ids = self.get_normal_user_ids()
+        print 'admin_ids', admin_ids
+        print 'normal_user_ids', normal_user_ids
 
-            if len(user_ids) == 2:
-                Monitor.command('conference %s relate %s %s sendvideo' % (self.name, user_ids[0], user_ids[1]))
-                Monitor.command('conference %s relate %s %s sendvideo' % (self.name, user_ids[1], user_ids[0]))
-            else:
-                print("!!!!!!!!! total normal user is not 2  !!!!!")
+        if len(normal_user_ids) < 2:
+            print '!!!!!!!!! It might not work properly due to total number of user is %s' % len(normal_user_ids)
 
-            # set default view for admin
-            if len(user_ids) > 0:
-                for admin_id in self.admin_ids:
-                    Monitor.command('conference %s relate %s %s sendvideo' % (self.name, user_ids[0], admin_id))
+        if len(normal_user_ids) == 2 and len(admin_ids) > 0:
 
-    def get_normal_users(self):
-        user_ids = []
-        for user in self.get_users():
-            if user.id not in self.admin_ids:
-                user_ids.append(user.id)
-        print 'total normal user: ', len(user_ids)
-        return user_ids
+            # clear relation from admin to normal user. So admin would not send video /voice to normal user
+            for u in normal_user_ids:
+                self.relate(",".join(admin_ids), u, Conference.RELATION_CLEAR)
 
-    def set_admin_view(self, inactive_number):
-        inactive_id = self.find_id_by_number(inactive_number)
+            # clear relation from normal user to admin. So we can freely choose which user's video admin should see
+            for a in admin_ids:
+                self.relate(",".join(normal_user_ids), a, Conference.RELATION_CLEAR)
 
-        for admin_id in self.admin_ids:
-            self.set_view_by_id(admin_id, inactive_id)
+            # set view for admin - Round robin
+            index = 0
+            for a in admin_ids:
+                self.relate(normal_user_ids[index], a, Conference.RELATION_SENDVIDEO)
+                index = (index + 1) % len(normal_user_ids)
 
-    # A see B, in otherwords: B send video to A
-    def set_view_by_number(self, active_number, inactive_number):
-        current_active_id = self.find_id_by_number(active_number)
-        current_inactive_id = self.find_id_by_number(inactive_number)
+            # member seeing each other
+            for u in normal_user_ids:
+                self.relate(','.join(normal_user_ids), u, Conference.RELATION_CLEAR)
 
-        if current_active_id == Conference.UNKNOWN_ID or current_inactive_id == Conference.UNKNOWN_ID:
-            print 'Invalid command'
+            index = 0
+            for i in range(len(normal_user_ids)):
+                nxt = (index + 1) % len(normal_user_ids)
+                self.relate(normal_user_ids[index], normal_user_ids[nxt], Conference.RELATION_SENDVIDEO)
+                index = nxt
+
+    # admin A should see B
+    def set_admin_view(self, admin_number, normal_user_number):
+        admin_id = self.find_id_by_number(admin_number)
+        user_id = self.find_id_by_number(normal_user_number)
+
+        if admin_id == Conference.UNKNOWN_ID or user_id == Conference.UNKNOWN_ID:
+            print 'Unknown number. Please check again'
             return
-        self.set_view_by_id(current_active_id, current_inactive_id)
+
+        admin_ids = self.get_admin_ids()
+        user_ids = self.get_normal_user_ids()
+
+        if admin_id not in admin_ids or user_id not in user_ids:
+            print 'Invalid command!'
+            return
+
+        # clear relation from other user to admin
+        self.relate(','.join(user_ids), admin_id, Conference.RELATION_CLEAR)
+
+        # user send video to admin
+        self.relate(user_id, admin_id, Conference.RELATION_SENDVIDEO)
+
+        # member seeing each other
+        for u in user_ids:
+            self.relate(','.join(user_ids), u, Conference.RELATION_CLEAR)
+
+        index = 0
+        for i in range(len(user_ids)):
+            nxt = (index + 1) % len(user_ids)
+            self.relate(user_ids[index], user_ids[nxt], Conference.RELATION_SENDVIDEO)
+            index = nxt
 
     def set_view_by_id(self, active_id, inactive_id):
-        user_ids = self.get_normal_users()
+        pass
 
-        # for user_id in user_ids:
-        Monitor.command('conference %s relate %s %s clear' % (self.name, ','.join(user_ids), active_id))
-        for user_id in user_ids:
-            Monitor.command('conference %s relate %s %s clear' % (self.name, active_id, user_id))
-
-        Monitor.command('conference %s relate %s %s sendvideo' % (self.name, inactive_id, active_id))
+    def relate(self, id, other_id, relation):
+        Monitor.command('conference %s relate %s %s %s' % (self.name, id, other_id, relation))
 
     @staticmethod
     def get_by_name(conf_name):

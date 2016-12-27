@@ -48,11 +48,11 @@ def get_conference_info(conf_name):
         return jsonpickle.encode(NOT_FOUND)
 
 
-@app.route('/conferences/<conf_name>/admin/<admin>', methods=['POST'])
-def set_admin(conf_name, admin):
+@app.route('/conferences/<conf_name>/init', methods=['POST'])
+def set_admin(conf_name):
     conference = Conference.get_by_name(conf_name)
     if conference:
-        conference.set_admin(admin)
+        conference.init_monitoring()
         return jsonpickle.encode(OK)
     else:
         return jsonpickle.encode({'status': 'Conference not found!'})
@@ -62,7 +62,7 @@ def set_admin(conf_name, admin):
 def set_admin_view(conf_name, viewer, viewee):
     conference = Conference.get_by_name(conf_name)
     if conference:
-        conference.set_view_by_number(viewer, viewee)
+        conference.set_admin_view(viewer, viewee)
         return jsonpickle.encode(OK)
     else:
         return jsonpickle.encode({'status': 'Conference not found!'})

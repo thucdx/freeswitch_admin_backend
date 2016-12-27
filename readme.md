@@ -45,7 +45,21 @@ Either:
     - 404 Not Found
     - 200 OK, room number
 
-### 4. Set view for admin
+### 4. Init monitoring
+
+It must be called when new admin join conference. This makes user seeing each other, while admin can see user.
+
+- Request
+
+```
+POST $HOST/conferences/<conf_name>/init
+```
+
+- Response
+
+OK
+
+### 5. Set view for admin
 
 - Request
 
@@ -53,6 +67,8 @@ Either:
 POST $HOST/conferences/<conference_name>/<viewer>/<viewee>
 ```
 
+`<viewer>` must be number of an admin
+`<viewee>` must be number of a normal user
 - Response
 
 Either:

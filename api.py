@@ -79,7 +79,13 @@ def set_admin(conf_name):
 @app.route('/conferences/call', methods=['POST'])
 def book_room():
     # get and validate
-    data = jsonpickle.loads(request.data)
+    print 'Request data', request.data
+
+    try:
+        data = jsonpickle.loads(request.data)
+    except:
+        return jsonpickle.encode({'code': -1, 'data': {'message': 'invalid json', 'data': request.data}})
+
     if 'caller' not in data or 'callee' not in data:
         return jsonpickle.encode({'code': -1, 'data': {'message': 'invalid json'}})
 

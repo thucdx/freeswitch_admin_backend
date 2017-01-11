@@ -1,11 +1,10 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-
 import jsonpickle
-# import json
 from expiringdict import ExpiringDict
 
 from conference import Conference
+
 
 RESERVED_TIME = 35
 reservedConference = ExpiringDict(max_len=100, max_age_seconds=RESERVED_TIME)
@@ -128,3 +127,5 @@ def get_available_conference():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, threaded=True)
+    # context = ('ssl/ca.crt', 'ssl/ca.key')
+    # app.run(host='0.0.0.0', port=5001, ssl_context=context, debug=True, threaded=True)

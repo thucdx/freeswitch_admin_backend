@@ -1,6 +1,6 @@
 import re
-import user
 
+import user
 from freeswitch_connector import Monitor
 
 

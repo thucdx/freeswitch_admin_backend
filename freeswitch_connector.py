@@ -2,7 +2,7 @@ import ESL
 
 
 class Monitor:
-    con = ESL.ESLconnection('fsexp', '8021', 'ClueCon')
+    con = ESL.ESLconnection('fsexp_tokyo', '8021', 'ClueCon')
 
     def __init__(self):
         if Monitor.con.connected():

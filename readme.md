@@ -76,5 +76,15 @@ Either:
     - OK
     - NOK: in case command is invalid
 
+### 6. Set hearing status for admin
 
+- Request
+```
+POST /conferences/<conf_name>/hear/<admin_number>/<can_hear>
+```
+
+`can_hear` either '0' or '1'
+where
+- '1' indicates : admin can hear,
+- '0' indicates : admin should hear nothing
 

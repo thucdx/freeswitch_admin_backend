@@ -117,6 +117,19 @@ def set_admin_view(conf_name, viewer, viewee):
         return jsonpickle.encode({'status': 'Conference not found!'})
 
 
+@app.route('/conferences/<conf_name>/hear/<admin_number>/<can_hear>', methods=['POST'])
+def set_admin_hear(conf_name, admin_number, can_hear):
+    conference = Conference.get_by_name(conf_name)
+    if conference:
+        if can_hear == '1':
+            conference.set_admin_hear(admin_number, True)
+        else:
+            conference.set_admin_hear(admin_number, False)
+        # conference.set_admin_hear(viewer, viewee)
+        return jsonpickle.encode(OK)
+    else:
+        return jsonpickle.encode({'status': 'Conference not found!'})
+
 @app.route('/conferences/free', methods=['GET'])
 def get_available_conference():
     room_str = available_conference()

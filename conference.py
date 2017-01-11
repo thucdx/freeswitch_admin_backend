@@ -65,7 +65,8 @@ class Conference:
             for a in admin_ids:
                 self.relate(normal_user_ids[index], a, Conference.RELATION_SENDVIDEO)
                 index = (index + 1) % len(normal_user_ids)
-                self.undeaf(a)
+                # default to no hear
+                # self.undeaf(a)
 
             # member seeing each other
             for u in normal_user_ids:
@@ -100,7 +101,8 @@ class Conference:
         self.relate(user_id, admin_id, Conference.RELATION_SENDVIDEO)
 
         # allow admin to hear
-        self.undeaf(admin_id)
+        # default to no hear
+        # self.undeaf(admin_id)
 
         # member seeing each other
         for u in user_ids:
@@ -112,6 +114,13 @@ class Conference:
             self.relate(user_ids[index], user_ids[nxt], Conference.RELATION_SENDVIDEO)
             index = nxt
 
+    def set_admin_hear(self, admin_number, can_hear):
+        admin_id = self.find_id_by_number(admin_number)
+        if can_hear:
+            self.undeaf(admin_id)
+        else:
+            self.deaf(admin_id)
+
     def set_view_by_id(self, active_id, inactive_id):
         pass
 
@@ -120,6 +129,9 @@ class Conference:
 
     def undeaf(self, id):
         Monitor.command('conference %s undeaf %s' % (self.name, id))
+
+    def deaf(self, id):
+        Monitor.command('conference %s deaf %s' % (self.name, id))
 
     @staticmethod
     def get_by_name(conf_name):

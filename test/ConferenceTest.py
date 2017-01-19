@@ -1,5 +1,6 @@
 import unittest
-from conference import Conference
+
+from fsadmin.conference import Conference
 
 
 class ConferenceTest(unittest.TestCase):

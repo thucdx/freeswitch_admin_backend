@@ -2,7 +2,7 @@ import ESL
 
 
 class Monitor:
-    con = ESL.ESLconnection('fsexp_tokyo', '8021', 'ClueCon')
+    con = ESL.ESLconnection('fscent', '8021', 'ClueCon')
 
     def __init__(self):
         if Monitor.con.connected():
@@ -15,6 +15,8 @@ class Monitor:
         print 'Send command: ', cmd
         return Monitor.con.api(cmd)
 
+    # to: user need to send message to. Please aware that it should be in format : extension@domain_ip
+    # To be exact, you need to command: `sofia status profile internal reg` to view exact user address.
     @staticmethod
     def send_sms(to, msg):
         event = ESL.ESLevent('CUSTOM', 'SMS::SEND_MESSAGE')
